@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ApInvoiceController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\IssueMaterialController;
 use App\Http\Controllers\PriceListController;
 use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\ReceiptEntryController;
@@ -536,4 +537,15 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('price_material/{id}', [PriceListController::class, 'price_material_all']);
         Route::post('approved', [PriceListController::class, 'approved']);
     });
+    Route::get('/inventory_rm_out', [IssueMaterialController::class, 'index'])->name('inventory_rm_out.index');
+    Route::post('inventory_rm_out/load_form', [IssueMaterialController::class, 'form_load'])->name('inventory_rm_out.load_form');
+    Route::post('inventory_rm_out/front_table', [IssueMaterialController::class, 'front_table'])->name('inventory_rm_out.front_table');
+    Route::post('inventory_rm_out/get_job_category_counts', [IssueMaterialController::class, 'get_job_category_counts'])->name('inventory_rm_out.get_job_category_counts');
+    Route::post('inventory_rm_out/material_options', [IssueMaterialController::class, 'material_options'])->name('inventory_rm_out.material_options');
+    Route::post('inventory_rm_out/store_item', [IssueMaterialController::class, 'store_item'])->name('inventory_rm_out.store_item');
+    Route::post('inventory_rm_out/detail_table', [IssueMaterialController::class, 'detail_table'])->name('inventory_rm_out.detail_table');
+    Route::post('inventory_rm_out/delete_item', [IssueMaterialController::class, 'delete_item'])->name('inventory_rm_out.delete_item');
+    Route::post('inventory_rm_out/sync_internal_api', [IssueMaterialController::class, 'sync_internal_api'])->name('inventory_rm_out.sync_internal_api');
+    Route::post('inventory_rm_out/check_label', [IssueMaterialController::class, 'check_label']);
+    #endregion
 });
