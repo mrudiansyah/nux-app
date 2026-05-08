@@ -28,6 +28,7 @@ spec:
         command: ["/bin/sh", "-c"]
         args:
           - |
+            mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache/data storage/logs &&
             chown -R www-data:www-data storage bootstrap/cache &&
             chmod -R 775 storage bootstrap/cache &&
             echo "memory_limit=2G" > /usr/local/etc/php/conf.d/memory.ini &&
