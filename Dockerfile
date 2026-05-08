@@ -41,7 +41,7 @@ RUN rm -f composer.lock && COMPOSER_MEMORY_LIMIT=-1 composer install --no-intera
 
 # Build Frontend Assets (Vite/Tailwind)
 RUN if [ -f "package.json" ]; then \
-    npm install && \
+    npm install --legacy-peer-deps && \
     npm run build; \
     fi
 
