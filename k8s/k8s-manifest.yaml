@@ -1,0 +1,112 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nux-app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nux-app-deploy
+  namespace: nux-app
+  annotations:
+    deployment-timestamp: "initial"
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: nux-app
+  template:
+    metadata:
+      labels:
+        app: nux-app
+    spec:
+      containers:
+      - name: app
+        image: mrudiansyah14/nux-app:latest
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            chown -R www-data:www-data storage bootstrap/cache &&
+            chmod -R 775 storage bootstrap/cache &&
+            echo "memory_limit=2G" > /usr/local/etc/php/conf.d/memory.ini &&
+            echo "max_execution_time=300" > /usr/local/etc/php/conf.d/timeout.ini &&
+            (php artisan migrate --force || true) &&
+            apache2-foreground
+        ports:
+        - containerPort: 80
+        env:
+        - name: APP_KEY
+          value: "base64:Aps5NXVoSLKdhC0hsNj4a0wzMgARGy0VGxkrk/4K/1w="
+        - name: APP_ENV
+          value: "production"
+        - name: APP_DEBUG
+          value: "false"
+        - name: APP_URL
+          value: "https://nux.summitadyawinsa.co.id"
+        - name: SESSION_DRIVER
+          value: "file"
+        - name: DB_CONNECTION
+          value: "sqlsrv"
+        - name: DB_HOST
+          value: "192.168.1.251"
+        - name: DB_PORT
+          value: "1433"
+        - name: DB_DATABASE
+          value: "nux-app"
+        - name: DB_USERNAME
+          value: "nux"
+        - name: DB_PASSWORD
+          value: "1nd()n3514572"
+        - name: DB_TRUST_SERVER_CERTIFICATE
+          value: "true"
+        - name: DB_ENCRYPT
+          value: "yes"
+        # Fourth DB (Epicor)
+        - name: DB_HOST_FOURTH
+          value: "192.168.1.247"
+        - name: DB_DATABASE_FOURTH
+          value: "app"
+        - name: DB_USERNAME_FOURTH
+          value: "sa"
+        - name: DB_PASSWORD_FOURTH
+          value: "1nd()n3514572"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nux-app-service
+  namespace: nux-app
+spec:
+  selector:
+    app: nux-app
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nux-app-ingress
+  namespace: nux-app
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  tls:
+  - hosts:
+    - nux.summitadyawinsa.co.id
+    secretName: factory-hub-tls
+  rules:
+  - host: nux.summitadyawinsa.co.id
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nux-app-service
+            port:
+              number: 80
