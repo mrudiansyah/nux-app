@@ -13,9 +13,6 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zip \
     unzip \
-    curl \
-    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
 # Install ekstensi PHP
@@ -38,12 +35,6 @@ COPY . /var/www/html
 
 # Install PHP dependencies (Force fresh resolution because local lock file is broken)
 RUN rm -f composer.lock && COMPOSER_MEMORY_LIMIT=-1 composer install --no-interaction --optimize-autoloader --no-dev --ignore-platform-reqs --no-scripts
-
-# Build Frontend Assets (Vite/Tailwind)
-RUN if [ -f "package.json" ]; then \
-    npm install --legacy-peer-deps && \
-    npm run build; \
-    fi
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
