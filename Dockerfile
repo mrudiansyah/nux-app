@@ -23,7 +23,7 @@ RUN install-php-extensions \
 RUN a2enmod rewrite
 
 # Setup Document Root
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
@@ -36,8 +36,8 @@ COPY . /var/www/html
 # Install PHP dependencies (Force fresh resolution because local lock file is broken)
 RUN rm -f composer.lock && COMPOSER_MEMORY_LIMIT=-1 composer install --no-interaction --optimize-autoloader --no-dev --ignore-platform-reqs --no-scripts
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Set permissions (Ensure directories exist)
+RUN mkdir -p storage bootstrap/cache && chown -R www-data:www-data storage bootstrap/cache
 
 EXPOSE 80
 CMD ["apache2-foreground"]
