@@ -10,11 +10,11 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
-        "laravel/framework": "^13.0",
+        "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^3.0",
         "maatwebsite/excel": "^3.1",
-        "elibyy/tcpdf-laravel": "^13.0",
+        "elibyy/tcpdf-laravel": "^11.0",
         "ramsey/uuid": "^4.5",
         "realrashid/sweet-alert": "^7.0",
         "simplesoftwareio/simple-qrcode": "^4.2",
